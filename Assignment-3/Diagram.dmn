@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:camunda="http://camunda.org/schema/1.0/dmn"
+             id="Definitions_LeaveApproval"
+             name="Leave Approval Decisions"
+             namespace="http://camunda.org/leave-approval">
+
+  <!-- Decision 1: reusable balance sufficiency check -->
+  <decision id="Decision_BalanceCheck" name="Check Leave Balance Sufficiency">
+    <variable id="Variable_BalanceCheck" name="balanceSufficient" typeRef="boolean" />
+    <decisionTable id="DecisionTable_BalanceCheck" hitPolicy="UNIQUE">
+      <input id="Input_NumberOfDays" label="Number of Days">
+        <inputExpression id="InputExpr_NumberOfDays" typeRef="number">
+          <text>numberOfDays</text>
+        </inputExpression>
+      </input>
+      <input id="Input_AvailableBalance" label="Available Balance">
+        <inputExpression id="InputExpr_AvailableBalance" typeRef="number">
+          <text>availableBalance</text>
+        </inputExpression>
+      </input>
+      <output id="Output_BalanceSufficient" label="Balance Sufficient" name="balanceSufficient" typeRef="boolean" />
+
+      <rule id="Rule_Balance_1">
+        <inputEntry id="InputEntry_1_1"><text></text></inputEntry>
+        <inputEntry id="InputEntry_1_2"><text>&gt;= numberOfDays</text></inputEntry>
+        <outputEntry id="OutputEntry_1_1"><text>true</text></outputEntry>
+      </rule>
+      <rule id="Rule_Balance_2">
+        <inputEntry id="InputEntry_2_1"><text></text></inputEntry>
+        <inputEntry id="InputEntry_2_2"><text>&lt; numberOfDays</text></inputEntry>
+        <outputEntry id="OutputEntry_2_1"><text>false</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+  <!-- Decision 2: approval routing, depends on Decision 1 -->
+  <decision id="Decision_ApprovalRouting" name="Determine Approval Route">
+    <variable id="Variable_ApprovalRouting" name="approvalResult" />
+    <informationRequirement id="InfoReq_1">
+      <requiredDecision href="#Decision_BalanceCheck" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_ApprovalRouting" hitPolicy="FIRST">
+      <input id="Input_LeaveType" label="Leave Type">
+        <inputExpression id="InputExpr_LeaveType" typeRef="string">
+          <text>leaveType</text>
+        </inputExpression>
+        <inputValues id="InputValues_LeaveType">
+          <text>"ANNUAL","SICK","UNPAID","PARENTAL"</text>
+        </inputValues>
+      </input>
+      <input id="Input_NumberOfDays2" label="Number of Days">
+        <inputExpression id="InputExpr_NumberOfDays2" typeRef="number">
+          <text>numberOfDays</text>
+        </inputExpression>
+      </input>
+      <input id="Input_BalanceSufficient" label="Balance Sufficient">
+        <inputExpression id="InputExpr_BalanceSufficient" typeRef="boolean">
+          <text>balanceSufficient</text>
+        </inputExpression>
+      </input>
+      <output id="Output_ApprovalDecision" label="Approval Decision" name="approvalDecision" typeRef="string">
+        <outputValues id="OutputValues_ApprovalDecision">
+          <text>"AUTO_APPROVE","MANUAL_REVIEW","AUTO_REJECT"</text>
+        </outputValues>
+      </output>
+      <output id="Output_ApprovalReason" label="Approval Reason" name="approvalReason" typeRef="string" />
+
+      <rule id="Rule_Route_1">
+        <description>Insufficient balance always blocks auto-approval</description>
+        <inputEntry id="IE_1_1"><text></text></inputEntry>
+        <inputEntry id="IE_1_2"><text></text></inputEntry>
+        <inputEntry id="IE_1_3"><text>false</text></inputEntry>
+        <outputEntry id="OE_1_1"><text>"AUTO_REJECT"</text></outputEntry>
+        <outputEntry id="OE_1_2"><text>"Insufficient leave balance"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_Route_2">
+        <description>Unpaid leave always needs manager sign-off</description>
+        <inputEntry id="IE_2_1"><text>"UNPAID"</text></inputEntry>
+        <inputEntry id="IE_2_2"><text></text></inputEntry>
+        <inputEntry id="IE_2_3"><text>true</text></inputEntry>
+        <outputEntry id="OE_2_1"><text>"MANUAL_REVIEW"</text></outputEntry>
+        <outputEntry id="OE_2_2"><text>"Unpaid leave requires manager approval"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_Route_3">
+        <description>Sick leave up to 3 days auto-approves</description>
+        <inputEntry id="IE_3_1"><text>"SICK"</text></inputEntry>
+        <inputEntry id="IE_3_2"><text>&lt;= 3</text></inputEntry>
+        <inputEntry id="IE_3_3"><text>true</text></inputEntry>
+        <outputEntry id="OE_3_1"><text>"AUTO_APPROVE"</text></outputEntry>
+        <outputEntry id="OE_3_2"><text>"Sick leave within auto-approval threshold"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_Route_4">
+        <description>Annual leave up to 5 days auto-approves</description>
+        <inputEntry id="IE_4_1"><text>"ANNUAL"</text></inputEntry>
+        <inputEntry id="IE_4_2"><text>&lt;= 5</text></inputEntry>
+        <inputEntry id="IE_4_3"><text>true</text></inputEntry>
+        <outputEntry id="OE_4_1"><text>"AUTO_APPROVE"</text></outputEntry>
+        <outputEntry id="OE_4_2"><text>"Annual leave within auto-approval threshold"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_Route_5">
+        <description>Parental leave up to 5 days auto-approves</description>
+        <inputEntry id="IE_5_1"><text>"PARENTAL"</text></inputEntry>
+        <inputEntry id="IE_5_2"><text>&lt;= 5</text></inputEntry>
+        <inputEntry id="IE_5_3"><text>true</text></inputEntry>
+        <outputEntry id="OE_5_1"><text>"AUTO_APPROVE"</text></outputEntry>
+        <outputEntry id="OE_5_2"><text>"Parental leave within auto-approval threshold"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_Route_6">
+        <description>Everything else falls back to manual review</description>
+        <inputEntry id="IE_6_1"><text></text></inputEntry>
+        <inputEntry id="IE_6_2"><text></text></inputEntry>
+        <inputEntry id="IE_6_3"><text>true</text></inputEntry>
+        <outputEntry id="OE_6_1"><text>"MANUAL_REVIEW"</text></outputEntry>
+        <outputEntry id="OE_6_2"><text>"Exceeds auto-approval threshold, requires manager review"</text></outputEntry>
+      </rule>
+
+    </decisionTable>
+  </decision>
+
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_1">
+      <dmndi:DMNShape id="DMNShape_BalanceCheck" dmnElementRef="Decision_BalanceCheck">
+        <dc:Bounds x="160" y="100" width="180" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_ApprovalRouting" dmnElementRef="Decision_ApprovalRouting">
+        <dc:Bounds x="420" y="100" width="180" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_InfoReq_1" dmnElementRef="InfoReq_1">
+        <di:waypoint x="340" y="140" />
+        <di:waypoint x="420" y="140" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+
+</definitions>
