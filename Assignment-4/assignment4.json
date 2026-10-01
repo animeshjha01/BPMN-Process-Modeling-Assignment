@@ -1,0 +1,166 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.5.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.20.0"
+  },
+  "schemaVersion": 16,
+  "id": "Form_LeaveRequest",
+  "components": [
+    {
+      "label": "Employee Name",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0",
+        "columns": null
+      },
+      "id": "Field_employeeName",
+      "key": "employeeName",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Employee ID",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1",
+        "columns": null
+      },
+      "id": "Field_employeeId",
+      "key": "employeeId",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Department",
+      "type": "select",
+      "layout": {
+        "row": "Row_2",
+        "columns": null
+      },
+      "id": "Field_department",
+      "key": "department",
+      "values": [
+        {
+          "label": "Engineering",
+          "value": "Engineering"
+        },
+        {
+          "label": "Human Resources",
+          "value": "HR"
+        },
+        {
+          "label": "Finance",
+          "value": "Finance"
+        },
+        {
+          "label": "Marketing",
+          "value": "Marketing"
+        }
+      ],
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Leave Type",
+      "type": "select",
+      "layout": {
+        "row": "Row_3",
+        "columns": null
+      },
+      "id": "Field_leaveType",
+      "key": "leaveType",
+      "values": [
+        {
+          "label": "Annual Leave",
+          "value": "Annual"
+        },
+        {
+          "label": "Sick Leave",
+          "value": "Sick"
+        },
+        {
+          "label": "Casual Leave",
+          "value": "Casual"
+        },
+        {
+          "label": "Unpaid Leave",
+          "value": "Unpaid"
+        }
+      ],
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Start Date",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_4",
+        "columns": null
+      },
+      "id": "Field_startDate",
+      "key": "startDate",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "End Date",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_5",
+        "columns": null
+      },
+      "id": "Field_endDate",
+      "key": "endDate",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Total Days",
+      "type": "number",
+      "layout": {
+        "row": "Row_6",
+        "columns": null
+      },
+      "id": "Field_totalDays",
+      "key": "totalDays",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Leave Reason",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_7",
+        "columns": null
+      },
+      "id": "Field_leaveReason",
+      "key": "leaveReason",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Emergency Contact",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_8",
+        "columns": null
+      },
+      "id": "Field_emergencyContact",
+      "key": "emergencyContact",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default"
+}
