@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:process id="Process_LeaveRequest" name="Leave Request Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Leave Requested">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_FillLeaveRequest" name="Fill Leave Request">
+      <bpmn:extensionElements>
+        <zeebe:userTaskForm id="UserTaskForm_LeaveRequest">{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.5.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.20.0"
+  },
+  "schemaVersion": 16,
+  "id": "Form_LeaveRequest",
+  "components": [
+    {
+      "label": "Employee Name",
+      "type": "textfield",
+      "layout": { "row": "Row_0", "columns": null },
+      "id": "Field_employeeName",
+      "key": "employeeName",
+      "validate": { "required": true }
+    },
+    {
+      "label": "Employee ID",
+      "type": "textfield",
+      "layout": { "row": "Row_1", "columns": null },
+      "id": "Field_employeeId",
+      "key": "employeeId",
+      "validate": { "required": true }
+    },
+    {
+      "label": "Department",
+      "type": "select",
+      "layout": { "row": "Row_2", "columns": null },
+      "id": "Field_department",
+      "key": "department",
+      "values": [
+        { "label": "Engineering", "value": "Engineering" },
+        { "label": "Human Resources", "value": "HR" },
+        { "label": "Finance", "value": "Finance" },
+        { "label": "Marketing", "value": "Marketing" }
+      ],
+      "validate": { "required": true }
+    },
+    {
+      "label": "Leave Type",
+      "type": "select",
+      "layout": { "row": "Row_3", "columns": null },
+      "id": "Field_leaveType",
+      "key": "leaveType",
+      "values": [
+        { "label": "Annual Leave", "value": "Annual" },
+        { "label": "Sick Leave", "value": "Sick" },
+        { "label": "Casual Leave", "value": "Casual" },
+        { "label": "Unpaid Leave", "value": "Unpaid" }
+      ],
+      "validate": { "required": true }
+    },
+    {
+      "label": "Start Date",
+      "type": "textfield",
+      "layout": { "row": "Row_4", "columns": null },
+      "id": "Field_startDate",
+      "key": "startDate",
+      "validate": { "required": true }
+    },
+    {
+      "label": "End Date",
+      "type": "textfield",
+      "layout": { "row": "Row_5", "columns": null },
+      "id": "Field_endDate",
+      "key": "endDate",
+      "validate": { "required": true }
+    },
+    {
+      "label": "Total Days",
+      "type": "number",
+      "layout": { "row": "Row_6", "columns": null },
+      "id": "Field_totalDays",
+      "key": "totalDays",
+      "validate": { "required": true }
+    },
+    {
+      "label": "Leave Reason",
+      "type": "textarea",
+      "layout": { "row": "Row_7", "columns": null },
+      "id": "Field_leaveReason",
+      "key": "leaveReason",
+      "validate": { "required": true }
+    },
+    {
+      "label": "Emergency Contact",
+      "type": "textfield",
+      "layout": { "row": "Row_8", "columns": null },
+      "id": "Field_emergencyContact",
+      "key": "emergencyContact",
+      "validate": { "required": true }
+    }
+  ],
+  "type": "default"
+}</zeebe:userTaskForm>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:UserTaskForm_LeaveRequest" />
+        <zeebe:assignmentDefinition assignee="demo" candidateGroups="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_1" name="Request Submitted">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_FillLeaveRequest" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_FillLeaveRequest" targetRef="EndEvent_1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_LeaveRequest">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="142" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_FillLeaveRequest_di" bpmnElement="Task_FillLeaveRequest">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="432" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="424" y="142" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="432" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
