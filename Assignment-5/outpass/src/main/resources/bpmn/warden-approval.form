@@ -1,0 +1,42 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "76881cd"
+  },
+  "schemaVersion": 19,
+  "id": "warden-approval-form",
+  "components": [
+    {
+      "text": "### Outpass Request Details\n* **Student:** {{studentName}} ({{regNo}})\n* **Hostel Block:** {{hostelBlock}}\n* **From:** {{outDate}}  **To:** {{returnDate}}\n* **Purpose:** {{purpose}}\n* **Parent Contact:** {{parentPhone}}",
+      "type": "text",
+      "layout": {
+        "row": "Row_0ffsdj1",
+        "columns": null
+      },
+      "id": "Field_186m56v"
+    },
+    {
+      "label": "Approve Outpass",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_0x84022",
+        "columns": null
+      },
+      "id": "Field_0rh9fp6",
+      "key": "approved"
+    },
+    {
+      "label": "Warden Remarks",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_1ylrfje",
+        "columns": null
+      },
+      "id": "Field_1dwbv0r",
+      "key": "wardenRemarks"
+    }
+  ],
+  "type": "default"
+}

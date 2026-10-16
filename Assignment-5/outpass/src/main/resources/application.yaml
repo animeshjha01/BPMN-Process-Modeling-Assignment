@@ -1,0 +1,14 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: outpass
+camunda:
+  client:
+    mode: saas
+    auth:
+      client-id: bT0_fJNkmq_gqnqE02uUdbt0Hhuc1bdI
+      client-secret: LGWw.n9gX~hqrEz-B~Rb.8MXxO~U5mwB3Ed-nst8c~o8aRw2PcdQLvEY3dZQqE0.
+    cloud:
+      cluster-id: 0cd6dbd8-564e-4d7f-8bf6-fd3a4e3244e4
+      region: sin-1
