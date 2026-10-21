@@ -1,0 +1,44 @@
+.app {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+.who, nav, .actions {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.who input { flex: 1; min-width: 180px; }
+nav button.on { background: #1d4ed8; color: white; }
+.card {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: grid;
+  gap: .65rem;
+}
+.card label { display: grid; gap: .25rem; }
+input, select, textarea, button { font: inherit; padding: .55rem; }
+textarea { min-height: 80px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td {
+  text-align: left;
+  padding: .5rem;
+  border-bottom: 1px solid #eee;
+}
+.badge {
+  padding: .15rem .5rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  background: #e5e7eb;
+}
+.badge.APPROVED { background: #d1fae5; }
+.badge.REJECTED { background: #fee2e2; }
+.badge.PENDING_APPROVAL { background: #fef3c7; }
+.error { color: #b42318; }
+.muted { color: #667085; }
+button.danger { background: #b42318; color: white; }

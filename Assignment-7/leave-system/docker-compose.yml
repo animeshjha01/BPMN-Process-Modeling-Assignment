@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: ./backend
+    container_name: leave-backend
+    ports:
+      - "8081:8081"
+    environment:
+      - CAMUNDA_GRPC_ADDRESS=http://host.docker.internal:26500
+      - CAMUNDA_REST_ADDRESS=http://host.docker.internal:8080
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/leavedb
+    volumes:
+      - leave-h2-data:/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build: ./frontend
+    container_name: leave-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  leave-h2-data:

@@ -1,0 +1,25 @@
+{
+  "components": [
+    {
+      "label": "Approve this request",
+      "type": "checkbox",
+      "id": "Field_Approve",
+      "key": "approved"
+    },
+    {
+      "label": "Comment",
+      "type": "textarea",
+      "id": "Field_Comment",
+      "key": "managerComment"
+    }
+  ],
+  "type": "default",
+  "id": "leave-approval",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.28.0"
+  },
+  "schemaVersion": 16
+}

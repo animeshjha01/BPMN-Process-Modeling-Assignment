@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  id="Definitions_LeaveRequest"
+                  targetNamespace="http://bpmn.io/schema/bpmn"
+                  exporter="Camunda Modeler"
+                  exporterVersion="5.28.0">
+  <bpmn:process id="leave-request" name="Leave request" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_LeaveRequested" name="Leave requested">
+      <bpmn:outgoing>Flow_ToValidate</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="Task_ValidateLeave" name="Validate leave request">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="validate-leave" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToValidate</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToGatewayValid</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_RequestValid" name="Request valid?" default="Flow_InvalidDefault">
+      <bpmn:incoming>Flow_ToGatewayValid</bpmn:incoming>
+      <bpmn:outgoing>Flow_Valid</bpmn:outgoing>
+      <bpmn:outgoing>Flow_InvalidDefault</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="Task_ManagerApproval" name="Manager approval">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="leave-approval" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Valid</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToGatewayApproved</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_Approved" name="Approved?" default="Flow_RejectedDefault">
+      <bpmn:incoming>Flow_ToGatewayApproved</bpmn:incoming>
+      <bpmn:outgoing>Flow_Approved</bpmn:outgoing>
+      <bpmn:outgoing>Flow_RejectedDefault</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="Task_FinalizeApproved" name="Finalize as approved">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="finalize-leave" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;APPROVED&#34;" target="outcome" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Approved</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToEndApproved</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_Merge" name="Merge">
+      <bpmn:incoming>Flow_InvalidDefault</bpmn:incoming>
+      <bpmn:incoming>Flow_RejectedDefault</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToFinalizeRejected</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="Task_FinalizeRejected" name="Finalize as rejected">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="finalize-leave" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;REJECTED&#34;" target="outcome" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToFinalizeRejected</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToEndRejected</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="EndEvent_Approved" name="Leave approved">
+      <bpmn:incoming>Flow_ToEndApproved</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:endEvent id="EndEvent_Rejected" name="Leave rejected">
+      <bpmn:incoming>Flow_ToEndRejected</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_ToValidate" sourceRef="StartEvent_LeaveRequested" targetRef="Task_ValidateLeave" />
+    <bpmn:sequenceFlow id="Flow_ToGatewayValid" sourceRef="Task_ValidateLeave" targetRef="Gateway_RequestValid" />
+    <bpmn:sequenceFlow id="Flow_Valid" name="Valid" sourceRef="Gateway_RequestValid" targetRef="Task_ManagerApproval">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=valid</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_InvalidDefault" name="Invalid" sourceRef="Gateway_RequestValid" targetRef="Gateway_Merge" />
+    <bpmn:sequenceFlow id="Flow_ToGatewayApproved" sourceRef="Task_ManagerApproval" targetRef="Gateway_Approved" />
+    <bpmn:sequenceFlow id="Flow_Approved" name="Yes" sourceRef="Gateway_Approved" targetRef="Task_FinalizeApproved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_RejectedDefault" name="No" sourceRef="Gateway_Approved" targetRef="Gateway_Merge" />
+    <bpmn:sequenceFlow id="Flow_ToFinalizeRejected" sourceRef="Gateway_Merge" targetRef="Task_FinalizeRejected" />
+    <bpmn:sequenceFlow id="Flow_ToEndApproved" sourceRef="Task_FinalizeApproved" targetRef="EndEvent_Approved" />
+    <bpmn:sequenceFlow id="Flow_ToEndRejected" sourceRef="Task_FinalizeRejected" targetRef="EndEvent_Rejected" />
+  </bpmn:process>
+</bpmn:definitions>
