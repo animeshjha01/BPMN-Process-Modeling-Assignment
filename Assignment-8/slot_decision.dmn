@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:modeler="http://camunda.org/schema/modeler/1.0"
+             id="Definitions_SlotDecision"
+             name="Slot Decision"
+             namespace="http://camunda.org/schema/1.0/dmn"
+             exporter="Camunda Modeler"
+             exporterVersion="5.30.0"
+             modeler:executionPlatform="Camunda Cloud"
+             modeler:executionPlatformVersion="8.7.0">
+  <decision id="slot_decision" name="Slot decision">
+    <decisionTable id="DecisionTable_Slot" hitPolicy="UNIQUE">
+      <input id="Input_Department" label="Department">
+        <inputExpression id="InputExpression_Department" typeRef="string">
+          <text>department</text>
+        </inputExpression>
+      </input>
+      <input id="Input_BookedCount" label="Booked count">
+        <inputExpression id="InputExpression_BookedCount" typeRef="number">
+          <text>bookedCount</text>
+        </inputExpression>
+      </input>
+      <output id="Output_SlotStatus" label="Slot status" name="slotStatus" typeRef="string">
+        <outputValues id="UnaryTests_SlotStatus">
+          <text>"AVAILABLE","FULL"</text>
+        </outputValues>
+      </output>
+      <output id="Output_SuggestedAction" label="Suggested action" name="suggestedAction" typeRef="string" />
+      <rule id="Rule_Cardiology_Available">
+        <description>Cardiology has capacity 10</description>
+        <inputEntry id="IE_1_1"><text>"Cardiology"</text></inputEntry>
+        <inputEntry id="IE_1_2"><text>&lt; 10</text></inputEntry>
+        <outputEntry id="OE_1_1"><text>"AVAILABLE"</text></outputEntry>
+        <outputEntry id="OE_1_2"><text>"Book the requested slot"</text></outputEntry>
+      </rule>
+      <rule id="Rule_Cardiology_Full">
+        <inputEntry id="IE_2_1"><text>"Cardiology"</text></inputEntry>
+        <inputEntry id="IE_2_2"><text>&gt;= 10</text></inputEntry>
+        <outputEntry id="OE_2_1"><text>"FULL"</text></outputEntry>
+        <outputEntry id="OE_2_2"><text>"Offer the next available Cardiology slot or add the patient to the waitlist"</text></outputEntry>
+      </rule>
+      <rule id="Rule_Orthopedics_Available">
+        <description>Orthopedics has capacity 8</description>
+        <inputEntry id="IE_3_1"><text>"Orthopedics"</text></inputEntry>
+        <inputEntry id="IE_3_2"><text>&lt; 8</text></inputEntry>
+        <outputEntry id="OE_3_1"><text>"AVAILABLE"</text></outputEntry>
+        <outputEntry id="OE_3_2"><text>"Book the requested slot"</text></outputEntry>
+      </rule>
+      <rule id="Rule_Orthopedics_Full">
+        <inputEntry id="IE_4_1"><text>"Orthopedics"</text></inputEntry>
+        <inputEntry id="IE_4_2"><text>&gt;= 8</text></inputEntry>
+        <outputEntry id="OE_4_1"><text>"FULL"</text></outputEntry>
+        <outputEntry id="OE_4_2"><text>"Offer the next available Orthopedics slot"</text></outputEntry>
+      </rule>
+      <rule id="Rule_Pediatrics_Available">
+        <description>Pediatrics has capacity 15</description>
+        <inputEntry id="IE_5_1"><text>"Pediatrics"</text></inputEntry>
+        <inputEntry id="IE_5_2"><text>&lt; 15</text></inputEntry>
+        <outputEntry id="OE_5_1"><text>"AVAILABLE"</text></outputEntry>
+        <outputEntry id="OE_5_2"><text>"Book the requested slot"</text></outputEntry>
+      </rule>
+      <rule id="Rule_Pediatrics_Full">
+        <inputEntry id="IE_6_1"><text>"Pediatrics"</text></inputEntry>
+        <inputEntry id="IE_6_2"><text>&gt;= 15</text></inputEntry>
+        <outputEntry id="OE_6_1"><text>"FULL"</text></outputEntry>
+        <outputEntry id="OE_6_2"><text>"Offer a slot with another pediatrician"</text></outputEntry>
+      </rule>
+      <rule id="Rule_Other_Available">
+        <description>Any other department has capacity 5</description>
+        <inputEntry id="IE_7_1"><text>not("Cardiology","Orthopedics","Pediatrics")</text></inputEntry>
+        <inputEntry id="IE_7_2"><text>&lt; 5</text></inputEntry>
+        <outputEntry id="OE_7_1"><text>"AVAILABLE"</text></outputEntry>
+        <outputEntry id="OE_7_2"><text>"Book the requested slot"</text></outputEntry>
+      </rule>
+      <rule id="Rule_Other_Full">
+        <inputEntry id="IE_8_1"><text>not("Cardiology","Orthopedics","Pediatrics")</text></inputEntry>
+        <inputEntry id="IE_8_2"><text>&gt;= 5</text></inputEntry>
+        <outputEntry id="OE_8_1"><text>"FULL"</text></outputEntry>
+        <outputEntry id="OE_8_2"><text>"Ask the front desk to find an alternative slot"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_SlotDecision">
+      <dmndi:DMNShape id="DMNShape_SlotDecision" dmnElementRef="slot_decision">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

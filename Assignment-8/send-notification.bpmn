@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+                  xmlns:modeler="http://camunda.org/schema/modeler/1.0"
+                  id="Definitions_SendNotification"
+                  targetNamespace="http://bpmn.io/schema/bpmn"
+                  exporter="Camunda Modeler"
+                  exporterVersion="5.30.0"
+                  modeler:executionPlatform="Camunda Cloud"
+                  modeler:executionPlatformVersion="8.7.0">
+  <bpmn:process id="send-notification" name="Send Notification" isExecutable="true">
+    <bpmn:documentation>Reusable child process. Inputs: recipientId (Telegram chat_id) and messageText. Sends the text through the Telegram Bot API using the REST Outbound Connector.</bpmn:documentation>
+    <bpmn:startEvent id="StartEvent_NotificationRequested" name="Notification requested">
+      <bpmn:outgoing>Flow_ToTelegram</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_SendTelegram" name="Send Telegram message" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="POST" target="method" />
+          <zeebe:input source="https://api.telegram.org/bot{{secrets.TELEGRAM_BOT_TOKEN}}/sendMessage" target="url" />
+          <zeebe:input source="={&#34;Content-Type&#34;: &#34;application/json&#34;}" target="headers" />
+          <zeebe:input source="={&#34;chat_id&#34;: recipientId, &#34;text&#34;: messageText}" target="body" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="20" target="readTimeoutInSeconds" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={telegramOk: response.body.ok, telegramMessageId: response.body.result.message_id}" />
+          <zeebe:header key="retryBackoff" value="PT5S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToTelegram</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_NotificationSent" name="Notification sent">
+      <bpmn:incoming>Flow_ToEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_ToTelegram" sourceRef="StartEvent_NotificationRequested" targetRef="Task_SendTelegram" />
+    <bpmn:sequenceFlow id="Flow_ToEnd" sourceRef="Task_SendTelegram" targetRef="EndEvent_NotificationSent" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_SendNotification">
+    <bpmndi:BPMNPlane id="BPMNPlane_SendNotification" bpmnElement="send-notification">
+      <bpmndi:BPMNShape id="StartEvent_NotificationRequested_di" bpmnElement="StartEvent_NotificationRequested">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="134" y="145" width="72" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SendTelegram_di" bpmnElement="Task_SendTelegram">
+        <dc:Bounds x="250" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_NotificationSent_di" bpmnElement="EndEvent_NotificationSent">
+        <dc:Bounds x="412" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="391" y="145" width="79" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_ToTelegram_di" bpmnElement="Flow_ToTelegram">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="250" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ToEnd_di" bpmnElement="Flow_ToEnd">
+        <di:waypoint x="350" y="120" />
+        <di:waypoint x="412" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
